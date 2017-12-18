@@ -1,0 +1,40 @@
+---
+- name: enable ipv4 forwarding
+  sysctl:
+    name=net.ipv4.ip_forward
+    value=1
+    sysctl_set=yes
+    state=present
+    reload=yes
+
+- name: get selinux status
+  shell: |
+      getenforce | grep -qi disable
+  register: selinux_disabled
+  ignore_errors: True
+
+- name: disable selinux if necessary
+  shell: |
+    setenforce 0
+    sed -i -e 's/^SELINUX=.*$/SELINUX=disabled/g' /etc/selinux/config
+  when: selinux_disabled.rc != 0
+
+- name: config ntp service
+  template: src=ntp.conf.j2 dest=/etc/ntp.conf
+  register: ntp_config
+
+- name: ensure ntp service is enabled and started
+  service: name=ntpd enabled=yes state=started
+  when: ntp_config.changed == true
+
+- name: restart ntp service when config changed
+  service: name=ntpd enabled=yes state=restarted
+  when: ntp_config.changed == true
+
+- name: install epel repository
+  yum: name={{ item }} state=latest
+  with_items:
+    - epel-release
+    - ca-certificates
+    - socat
+    - util-linux

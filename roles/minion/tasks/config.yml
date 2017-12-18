@@ -1,0 +1,47 @@
+---
+- name: config docker
+  template:
+    src=docker.j2
+    dest=/etc/docker/daemon.json
+    mode=0644
+  register: docker_config
+
+- name: config flannel
+  template:
+    src=flanneld.j2
+    dest=/etc/sysconfig/flanneld
+    mode=0644
+  register: flannel_config
+
+- name: config kube globals
+  template:
+    src=config.j2
+    dest=/etc/kubernetes/config
+    mode=0644
+  register: kube_global_config
+
+- name: config kubelet
+  template:
+    src=kubelet.j2
+    dest=/etc/kubernetes/kubelet
+    mode=0644
+  register: kubelet_config
+
+- name: config kube proxy
+  template:
+    src=proxy.j2
+    dest=/etc/kubernetes/proxy
+    mode=0644
+  register: kube_proxy_config
+
+- name: enable flanneld service
+  service: name=flanneld enabled=yes state=started
+
+- name: enable docker service
+  service: name=docker enabled=yes state=started
+
+- name: enable kubelet service
+  service: name=kubelet enabled=yes state=started
+
+- name: enable kube-proxy service
+  service: name=kube-proxy enabled=yes state=started

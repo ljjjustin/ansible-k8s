@@ -1,0 +1,7 @@
+---
+- name: install docker and kubernetes
+  yum: name={{ item }} state=latest
+  with_items:
+    - docker
+    - kubernetes
+    - flannel

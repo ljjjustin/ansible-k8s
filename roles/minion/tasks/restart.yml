@@ -1,0 +1,16 @@
+---
+- name: restart flanneld if config changed
+  service: name=flanneld state=restarted
+  when: flannel_config.changed == true
+
+- name: restart docker if config changed
+  service: name=docker state=restarted
+  when: docker_config.changed == true
+
+- name: restart kubelet if config changed
+  service: name=kubelet state=restarted
+  when: kube_global_config.changed == true or kubelet_config.changed == true
+
+- name: restart kube-proxy if config changed
+  service: name=kube-proxy state=restarted
+  when: kube_global_config.changed == true or kube_proxy_config.changed == true

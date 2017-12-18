@@ -1,0 +1,8 @@
+---
+- include: install.yml
+
+- include: config.yml
+  tags:
+    - configure
+
+- include: restart.yml

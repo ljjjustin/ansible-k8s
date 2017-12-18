@@ -1,0 +1,11 @@
+---
+- name: get flannel network config
+  shell: |
+      etcdctl get "{{ flannel_etcd_prefix }}"
+  register: flannel_config
+  ignore_errors: True
+
+- name: set flannel network config if not set
+  shell: |
+      etcdctl mk "{{ flannel_etcd_prefix }}/config" '{"Network": "{{ kube_service_cidr }}"}'
+  when: flannel_config.rc != 0

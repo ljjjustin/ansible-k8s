@@ -1,0 +1,16 @@
+---
+- name: restart etcd if config changed
+  service: name=etcd state=restarted
+  when: etcd_config.changed == true
+
+- name: restart kube-apiserver if config changed
+  service: name=kube-apiserver state=restarted
+  when: kube_global_config.changed == true or kube_apiserver_config.changed == true
+
+- name: restart kube-scheduler if config changed
+  service: name=kube-scheduler state=restarted
+  when: kube_global_config.changed == true or kube_scheduler_config.changed == true
+
+- name: restart kube-controller-manager if config changed
+  service: name=kube-controller-manager state=restarted
+  when: kube_global_config.changed == true or kube_controller_config.changed == true

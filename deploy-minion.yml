@@ -1,0 +1,8 @@
+---
+- name: Deploy minion
+  hosts: minions
+  become: yes
+  roles:
+    - minion
+  tags:
+    - minions

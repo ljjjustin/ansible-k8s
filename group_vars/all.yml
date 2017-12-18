@@ -1,0 +1,4 @@
+ntpserver: pool.ntp.org
+
+kube_cluster_name: "k8s.local"
+kube_service_cidr: "10.10.0.0/16"

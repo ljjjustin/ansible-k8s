@@ -1,0 +1,6 @@
+---
+- name: install etcd and kubernetes
+  yum: name={{ item }} state=latest
+  with_items:
+    - kubernetes
+    - etcd

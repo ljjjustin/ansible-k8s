@@ -1,0 +1,10 @@
+---
+- include: install.yml
+
+- include: config.yml
+  tags:
+    - configure
+
+- include: restart.yml
+
+- include: flannel.yml

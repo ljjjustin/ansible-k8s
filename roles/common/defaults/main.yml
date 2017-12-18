@@ -1,0 +1,5 @@
+etcd_endpoints: "{% for n in groups['masters'] %}http://{{ n }}:2379{% if not loop.last %},{% endif %}{% endfor %}"
+
+kube_api_servers: "{% for n in groups['masters'] %}http://{{ n }}:8080{% if not loop.last %},{% endif %}{% endfor %}"
+
+flannel_etcd_prefix: "/{{ kube_cluster_name }}/network/flannel"

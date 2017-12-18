@@ -1,0 +1,6 @@
+---
+- include: deploy-master.yml
+
+- include: deploy-minion.yml
+
+- include: deploy-addons.yml

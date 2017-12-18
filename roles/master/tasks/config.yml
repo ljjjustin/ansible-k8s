@@ -1,0 +1,47 @@
+---
+- name: config etcd
+  template:
+    src=etcd.conf.j2
+    dest=/etc/etcd/etcd.conf
+    mode=0644
+  register: etcd_config
+
+- name: config kube globals
+  template:
+    src=config.j2
+    dest=/etc/kubernetes/config
+    mode=0644
+  register: kube_global_config
+
+- name: config kubernetes apiserver
+  template:
+    src=apiserver.j2
+    dest=/etc/kubernetes/apiserver
+    mode=0644
+  register: kube_apiserver_config
+
+- name: config kubernetes scheduler
+  template:
+    src=scheduler.j2
+    dest=/etc/kubernetes/scheduler
+    mode=0644
+  register: kube_scheduler_config
+
+- name: config kubernetes controller-manager
+  template:
+    src=controller-manager.j2
+    dest=/etc/kubernetes/controller-manager
+    mode=0644
+  register: kube_controller_config
+
+- name: enable etcd service
+  service: name=etcd enabled=yes state=started
+
+- name: enable kube-apiserver service
+  service: name=kube-apiserver enabled=yes state=started
+
+- name: enable kube-scheduler service
+  service: name=kube-scheduler enabled=yes state=started
+
+- name: enable kube-controller-manager service
+  service: name=kube-controller-manager enabled=yes state=started
