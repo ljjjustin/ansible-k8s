@@ -1,0 +1,38 @@
+---
+- name: Create dashboard addons directory
+  file: path=/etc/kubernetes/addons/dashboard state=directory mode=0755
+
+- name: Install kubernetes dashboard
+  template:
+    src="dashboard/{{ item }}.yaml.j2"
+    dest="/etc/kubernetes/addons/dashboard/{{ item }}.yaml"
+    mode=0644
+  with_items:
+    - dashboard-controller
+    - dashboard-service
+
+- name: check if dashboard controller already exists
+  shell: >
+      kubectl get deployment --namespace=kube-system | grep -qw kubernetes-dashboard
+  ignore_errors: true
+  register: dashboard_controller_exists
+  delegate_to: "{{ groups['masters'][0] }}"
+
+- name: create dashboard controller if not exists
+  shell: >
+      kubectl create -f /etc/kubernetes/addons/dashboard/dashboard-controller.yaml
+  delegate_to: "{{ groups['masters'][0] }}"
+  when: dashboard_controller_exists.rc != 0
+
+- name: check if dashboard service already exists
+  shell: >
+      kubectl get service --namespace=kube-system | grep -qw kubernetes-dashboard
+  ignore_errors: true
+  register: dashboard_service_exists
+  delegate_to: "{{ groups['masters'][0] }}"
+
+- name: create dashboard service if not exists
+  shell: >
+      kubectl create -f /etc/kubernetes/addons/dashboard/dashboard-service.yaml
+  delegate_to: "{{ groups['masters'][0] }}"
+  when: dashboard_service_exists.rc != 0

@@ -1,11 +1,13 @@
 ---
 - name: get flannel network config
   shell: |
-      etcdctl get "{{ flannel_etcd_prefix }}"
+      etcdctl get "{{ flannel_etcd_prefix }}/config"
   register: flannel_config
   ignore_errors: True
+  delegate_to: "{{ groups['masters'][0] }}"
 
 - name: set flannel network config if not set
   shell: |
       etcdctl mk "{{ flannel_etcd_prefix }}/config" '{"Network": "{{ kube_service_cidr }}"}'
   when: flannel_config.rc != 0
+  delegate_to: "{{ groups['masters'][0] }}"
